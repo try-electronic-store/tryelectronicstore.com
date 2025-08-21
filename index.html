@@ -8,8 +8,10 @@
             font-family: Times New Roman, serif;
             background-color: white;
             color: black;
-            margin: 20px;
+            margin: 0;
+            padding: 20px;
             font-size: 14px;
+            text-align: center;
         }
         
         h1 {
@@ -75,20 +77,17 @@
     </style>
 </head>
 <body>
-    <h1>electronic_store</h1>
+    <h1>Radio Stream</h1>
     
     <div class="album-container">
         <div class="album-cover" onclick="flipCover()">
-            <img class="cover-front" src="Electronic Store Plug N Play Front.jpg" alt="Album Front">
-            <img class="cover-back" src="Electronic Store Plug n Play Back.jpg" alt="Album Back">
+            <img class="cover-front" src="album-front.jpg" alt="Album Front">
+            <img class="cover-back" src="album-back.jpg" alt="Album Back">
         </div>
     </div>
     <br><br>
     
-    <button onclick="tuneIn()">TUNE IN</button>
-    <button onclick="tuneOut()">TUNE OUT</button>
-    
-    <div class="status" id="status">Ready to tune in...</div>
+    <button onclick="togglePlay()" id="playButton">PLAY</button>
     
     <div class="info">
         <p>Stream position: <span id="position">--:--</span></p>
@@ -101,8 +100,8 @@
 
     <script>
         const audio = document.getElementById('radioStream');
-        const statusDiv = document.getElementById('status');
         const positionSpan = document.getElementById('position');
+        const playButton = document.getElementById('playButton');
         
         // Radio loop configuration
         const LOOP_DURATION = 180; // 3 minutes (adjust based on your actual file length)
@@ -126,41 +125,38 @@
             }
         }
         
-        function tuneIn() {
-            if (isPlaying) return;
-            
-            statusDiv.textContent = "Tuning in...";
-            
-            // Calculate where we should be in the stream
-            const streamPosition = getCurrentStreamPosition();
-            
-            audio.currentTime = streamPosition;
-            audio.loop = true;
-            
-            audio.play().then(() => {
-                isPlaying = true;
-                statusDiv.textContent = "Now playing - Live stream";
+        function togglePlay() {
+            if (isPlaying) {
+                // Stop playing
+                audio.pause();
+                isPlaying = false;
+                playButton.textContent = "PLAY";
+                positionSpan.textContent = "--:--";
                 
-                // Update position display every second
-                positionInterval = setInterval(updatePositionDisplay, 1000);
-                updatePositionDisplay();
+                if (positionInterval) {
+                    clearInterval(positionInterval);
+                }
+            } else {
+                // Start playing
+                playButton.textContent = "STOP";
                 
-            }).catch(error => {
-                statusDiv.textContent = "Error: Could not connect to stream";
-                console.log('Playback error:', error);
-            });
-        }
-        
-        function tuneOut() {
-            if (!isPlaying) return;
-            
-            audio.pause();
-            isPlaying = false;
-            statusDiv.textContent = "Stream stopped";
-            positionSpan.textContent = "--:--";
-            
-            if (positionInterval) {
-                clearInterval(positionInterval);
+                // Calculate where we should be in the stream
+                const streamPosition = getCurrentStreamPosition();
+                
+                audio.currentTime = streamPosition;
+                audio.loop = true;
+                
+                audio.play().then(() => {
+                    isPlaying = true;
+                    
+                    // Update position display every second
+                    positionInterval = setInterval(updatePositionDisplay, 1000);
+                    updatePositionDisplay();
+                    
+                }).catch(error => {
+                    playButton.textContent = "PLAY";
+                    console.log('Playback error:', error);
+                });
             }
         }
         
