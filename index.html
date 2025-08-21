@@ -49,7 +49,7 @@
         }
         
         .album-cover.flipped {
-            transform: rotateX(180deg);
+            transform: rotateY(180deg);
         }
         
         .cover-front, .cover-back {
@@ -77,7 +77,7 @@
     </style>
 </head>
 <body>
-    <h1>electronic_store</h1>
+    <h1>Radio Stream</h1>
     
     <div class="album-container">
         <div class="album-cover" onclick="flipCover()">
@@ -104,8 +104,19 @@
         const playButton = document.getElementById('playButton');
         
         // Radio loop configuration
-        const LOOP_DURATION = 180; // 3 minutes (adjust based on your actual file length)
+        const LOOP_DURATION = 615; // 10:15 total length in seconds
         const STREAM_START_TIME = new Date('2025-01-01T00:00:00Z'); // Arbitrary reference point
+        
+        // Track list with timestamps
+        const TRACKS = [
+            { time: 0, title: "Work Me" },
+            { time: 109, title: "Cycles" },
+            { time: 221, title: "Came Out Like a Frog" },
+            { time: 270, title: "In Your Room" },
+            { time: 393, title: "Passion Of the Sky" },
+            { time: 527, title: "Groovy" },
+            { time: 615, title: "Real Madrid" }
+        ];
         
         let isPlaying = false;
         let positionInterval;
@@ -116,12 +127,23 @@
             return elapsed % LOOP_DURATION; // current position in loop
         }
         
+        function getCurrentTrack(position) {
+            // Find the current track based on position
+            for (let i = TRACKS.length - 1; i >= 0; i--) {
+                if (position >= TRACKS[i].time) {
+                    return TRACKS[i];
+                }
+            }
+            return TRACKS[0]; // Default to first track
+        }
+        
         function updatePositionDisplay() {
             if (isPlaying) {
                 const position = getCurrentStreamPosition();
+                const currentTrack = getCurrentTrack(position);
                 const minutes = Math.floor(position / 60);
                 const seconds = Math.floor(position % 60);
-                positionSpan.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                positionSpan.textContent = `${minutes}:${seconds.toString().padStart(2, '0')} - ${currentTrack.title}`;
             }
         }
         
@@ -131,7 +153,7 @@
                 audio.pause();
                 isPlaying = false;
                 playButton.textContent = "PLAY";
-                positionSpan.textContent = "--:--";
+                positionSpan.textContent = "--:-- - Not playing";
                 
                 if (positionInterval) {
                     clearInterval(positionInterval);
