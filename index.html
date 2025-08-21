@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Pages Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .success {
+            background: #4CAF50;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-size: 1.2em;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        
+        .test-button {
+            background: #FF6B6B;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 25px;
+            cursor: pointer;
+            margin: 10px;
+            transition: transform 0.3s ease;
+        }
+        
+        .test-button:hover {
+            transform: scale(1.05);
+            background: #FF5252;
+        }
+        
+        .info {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .timestamp {
+            font-size: 0.9em;
+            opacity: 0.8;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎉 Success!</h1>
+        
+        <div class="success">
+            Your GitHub Pages site is working perfectly!
+        </div>
+        
+        <div class="info">
+            <h3>✅ What this confirms:</h3>
+            <p>• Your repository is properly configured</p>
+            <p>• GitHub Pages is enabled and deployed</p>
+            <p>• HTML, CSS, and JavaScript are working</p>
+            <p>• You're ready to build your radio streaming site!</p>
+        </div>
+        
+        <button class="test-button" onclick="testInteractivity()">Test JavaScript</button>
+        <button class="test-button" onclick="showMoreInfo()">Show More Info</button>
+        
+        <div id="jsTest" style="display: none; margin-top: 20px;">
+            <div style="background: #4CAF50; padding: 15px; border-radius: 8px;">
+                🚀 JavaScript is working! You're all set to add your radio player.
+            </div>
+        </div>
+        
+        <div id="moreInfo" style="display: none; margin-top: 20px;">
+            <div class="info">
+                <h4>Next Steps:</h4>
+                <p>1. Add your audio files to the repository</p>
+                <p>2. Create your radio player functionality</p>
+                <p>3. Connect your custom domain</p>
+                <p>4. Test on mobile devices</p>
+            </div>
+        </div>
+        
+        <div class="timestamp">
+            Page loaded: <span id="loadTime"></span>
+        </div>
+    </div>
+
+    <script>
+        // Display current time when page loaded
+        document.getElementById('loadTime').textContent = new Date().toLocaleString();
+        
+        function testInteractivity() {
+            const testDiv = document.getElementById('jsTest');
+            if (testDiv.style.display === 'none') {
+                testDiv.style.display = 'block';
+            } else {
+                testDiv.style.display = 'none';
+            }
+        }
+        
+        function showMoreInfo() {
+            const infoDiv = document.getElementById('moreInfo');
+            if (infoDiv.style.display === 'none') {
+                infoDiv.style.display = 'block';
+            } else {
+                infoDiv.style.display = 'none';
+            }
+        }
+        
+        // Add some visual feedback
+        console.log('🎵 GitHub Pages test successful! Ready for your radio streaming site.');
+    </script>
+</body>
+</html>
