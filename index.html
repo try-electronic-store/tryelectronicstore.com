@@ -77,7 +77,7 @@
     </style>
 </head>
 <body>
-    <h1>Radio Stream</h1>
+    <h1>electronic_store</h1>
     
     <div class="album-container">
         <div class="album-cover" onclick="flipCover()">
@@ -105,7 +105,7 @@
         
         // Radio loop configuration
         const LOOP_DURATION = 615; // 10:15 total length in seconds
-        const STREAM_START_TIME = new Date('2025-01-01T00:00:00Z'); // Arbitrary reference point
+        const STREAM_START_TIME = new Date('2025-08-20T00:00:00Z'); // Arbitrary reference point
         
         // Track list with timestamps
         const TRACKS = [
@@ -197,18 +197,18 @@
         });
         
         // Sync correction - if audio gets out of sync, resync every 30 seconds
-        setInterval(() => {
-            if (isPlaying && !audio.paused) {
-                const expectedPosition = getCurrentStreamPosition();
-                const actualPosition = audio.currentTime;
-                const drift = Math.abs(expectedPosition - actualPosition);
+        //setInterval(() => {
+           // if (isPlaying && !audio.paused) {
+             //   const expectedPosition = getCurrentStreamPosition();
+               // const actualPosition = audio.currentTime;
+                //const drift = Math.abs(expectedPosition - actualPosition);
                 
                 // If we're more than 2 seconds off, resync
-                if (drift > 2) {
-                    audio.currentTime = expectedPosition;
+                //if (drift > 2) {
+                  //  audio.currentTime = expectedPosition;
                 }
             }
-        }, 30000);
+       // }, 30000);
         
         // Album cover flip functionality
         function flipCover() {
