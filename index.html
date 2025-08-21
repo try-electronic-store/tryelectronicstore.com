@@ -46,6 +46,7 @@
             transform-style: preserve-3d;
             transition: transform 0.8s;
             cursor: pointer;
+            transform-origin: center center;
         }
         
         .album-cover.flipped {
@@ -77,14 +78,13 @@
     </style>
 </head>
 <body>
-    <h1>Radio Stream</h1>
+    <h1>electronic_store</h1>
     
-    <div class="album-container">
+   <div class="album-container">
         <div class="album-cover" onclick="flipCover()">
-            <img class="cover-front" src="album-front.jpg" alt="Album Front">
-            <img class="cover-back" src="album-back.jpg" alt="Album Back">
+            <img class="cover-front" src="Electronic Store Plug N Play Front.jpg" alt="Plug N Play – electronic_store">
+            <img class="cover-back" src="Electronic Store Plug n Play Back.jpg" alt="Plug N Play – electronic_store">
         </div>
-    </div>
     <br><br>
     
     <button onclick="togglePlay()" id="playButton">PLAY</button>
@@ -183,32 +183,16 @@
         }
         
         // Handle audio events
-        audio.addEventListener('loadstart', () => {
-            if (isPlaying) statusDiv.textContent = "Connecting to stream...";
-        });
-        
-        audio.addEventListener('canplay', () => {
-            if (isPlaying) statusDiv.textContent = "Now playing - Live stream";
-        });
-        
         audio.addEventListener('error', () => {
-            statusDiv.textContent = "Connection failed";
+            playButton.textContent = "PLAY";
             isPlaying = false;
         });
         
-        // Sync correction - if audio gets out of sync, resync every 30 seconds
-        setInterval(() => {
-            if (isPlaying && !audio.paused) {
-                const expectedPosition = getCurrentStreamPosition();
-                const actualPosition = audio.currentTime;
-                const drift = Math.abs(expectedPosition - actualPosition);
-                
-                // If we're more than 2 seconds off, resync
-                if (drift > 2) {
-                    audio.currentTime = expectedPosition;
-                }
-            }
-        }, 30000);
+        // Album cover flip functionality
+        function flipCover() {
+            const cover = document.querySelector('.album-cover');
+            cover.classList.toggle('flipped');
+        }
         
         // Album cover flip functionality
         function flipCover() {
