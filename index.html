@@ -1,145 +1,159 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
+    <title>Radio Stream</title>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GitHub Pages Test</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 50px auto;
-            padding: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            text-align: center;
-        }
-        
-        .container {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 40px;
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            font-family: Times New Roman, serif;
+            background-color: white;
+            color: black;
+            margin: 20px;
+            font-size: 14px;
         }
         
         h1 {
-            font-size: 3em;
-            margin-bottom: 20px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            font-size: 24px;
+            margin-bottom: 10px;
         }
         
-        .success {
-            background: #4CAF50;
-            color: white;
-            padding: 20px;
-            border-radius: 8px;
-            margin: 20px 0;
-            font-size: 1.2em;
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.7; }
-            100% { opacity: 1; }
-        }
-        
-        .test-button {
-            background: #FF6B6B;
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            font-size: 18px;
-            border-radius: 25px;
+        button {
+            font-family: Times New Roman, serif;
+            font-size: 14px;
+            padding: 5px 15px;
+            margin: 5px;
+            background-color: #eeeeee;
+            border: 2px outset #eeeeee;
             cursor: pointer;
-            margin: 10px;
-            transition: transform 0.3s ease;
         }
         
-        .test-button:hover {
-            transform: scale(1.05);
-            background: #FF5252;
+        button:active {
+            border: 2px inset #eeeeee;
+        }
+        
+        .status {
+            margin: 10px 0;
+            font-weight: bold;
         }
         
         .info {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 15px;
-            border-radius: 8px;
-            margin: 20px 0;
-        }
-        
-        .timestamp {
-            font-size: 0.9em;
-            opacity: 0.8;
-            margin-top: 20px;
+            margin: 15px 0;
+            font-size: 12px;
+            color: #666666;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🎉 Success!</h1>
-        
-        <div class="success">
-            Your GitHub Pages site is working perfectly!
-        </div>
-        
-        <div class="info">
-            <h3>✅ What this confirms:</h3>
-            <p>• Your repository is properly configured</p>
-            <p>• GitHub Pages is enabled and deployed</p>
-            <p>• HTML, CSS, and JavaScript are working</p>
-            <p>• You're ready to build your radio streaming site!</p>
-        </div>
-        
-        <button class="test-button" onclick="testInteractivity()">Test JavaScript</button>
-        <button class="test-button" onclick="showMoreInfo()">Show More Info</button>
-        
-        <div id="jsTest" style="display: none; margin-top: 20px;">
-            <div style="background: #4CAF50; padding: 15px; border-radius: 8px;">
-                🚀 JavaScript is working! You're all set to add your radio player.
-            </div>
-        </div>
-        
-        <div id="moreInfo" style="display: none; margin-top: 20px;">
-            <div class="info">
-                <h4>Next Steps:</h4>
-                <p>1. Add your audio files to the repository</p>
-                <p>2. Create your radio player functionality</p>
-                <p>3. Connect your custom domain</p>
-                <p>4. Test on mobile devices</p>
-            </div>
-        </div>
-        
-        <div class="timestamp">
-            Page loaded: <span id="loadTime"></span>
-        </div>
+    <h1>Radio Stream</h1>
+    
+    <button onclick="tuneIn()">TUNE IN</button>
+    <button onclick="tuneOut()">TUNE OUT</button>
+    
+    <div class="status" id="status">Ready to tune in...</div>
+    
+    <div class="info">
+        <p>Click "TUNE IN" to join the ongoing radio stream.</p>
+        <p>Everyone hears the same thing at the same time.</p>
+        <p>Stream position: <span id="position">--:--</span></p>
     </div>
+    
+    <audio id="radioStream" preload="none">
+        <source src="https://meek-fox-78808e.netlify.app/audio/test.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
 
     <script>
-        // Display current time when page loaded
-        document.getElementById('loadTime').textContent = new Date().toLocaleString();
+        const audio = document.getElementById('radioStream');
+        const statusDiv = document.getElementById('status');
+        const positionSpan = document.getElementById('position');
         
-        function testInteractivity() {
-            const testDiv = document.getElementById('jsTest');
-            if (testDiv.style.display === 'none') {
-                testDiv.style.display = 'block';
-            } else {
-                testDiv.style.display = 'none';
+        // Radio loop configuration
+        const LOOP_DURATION = 109; // 3 minutes (adjust based on your actual file length)
+        const STREAM_START_TIME = new Date('2025-01-01T00:00:00Z'); // Arbitrary reference point
+        
+        let isPlaying = false;
+        let positionInterval;
+        
+        function getCurrentStreamPosition() {
+            const now = new Date();
+            const elapsed = (now - STREAM_START_TIME) / 1000; // seconds since stream "started"
+            return elapsed % LOOP_DURATION; // current position in loop
+        }
+        
+        function updatePositionDisplay() {
+            if (isPlaying) {
+                const position = getCurrentStreamPosition();
+                const minutes = Math.floor(position / 60);
+                const seconds = Math.floor(position % 60);
+                positionSpan.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
             }
         }
         
-        function showMoreInfo() {
-            const infoDiv = document.getElementById('moreInfo');
-            if (infoDiv.style.display === 'none') {
-                infoDiv.style.display = 'block';
-            } else {
-                infoDiv.style.display = 'none';
+        function tuneIn() {
+            if (isPlaying) return;
+            
+            statusDiv.textContent = "Tuning in...";
+            
+            // Calculate where we should be in the stream
+            const streamPosition = getCurrentStreamPosition();
+            
+            audio.currentTime = streamPosition;
+            audio.loop = true;
+            
+            audio.play().then(() => {
+                isPlaying = true;
+                statusDiv.textContent = "Now playing - Live stream";
+                
+                // Update position display every second
+                positionInterval = setInterval(updatePositionDisplay, 1000);
+                updatePositionDisplay();
+                
+            }).catch(error => {
+                statusDiv.textContent = "Error: Could not connect to stream";
+                console.log('Playback error:', error);
+            });
+        }
+        
+        function tuneOut() {
+            if (!isPlaying) return;
+            
+            audio.pause();
+            isPlaying = false;
+            statusDiv.textContent = "Stream stopped";
+            positionSpan.textContent = "--:--";
+            
+            if (positionInterval) {
+                clearInterval(positionInterval);
             }
         }
         
-        // Add some visual feedback
-        console.log('🎵 GitHub Pages test successful! Ready for your radio streaming site.');
+        // Handle audio events
+        audio.addEventListener('loadstart', () => {
+            if (isPlaying) statusDiv.textContent = "Connecting to stream...";
+        });
+        
+        audio.addEventListener('canplay', () => {
+            if (isPlaying) statusDiv.textContent = "Now playing - Live stream";
+        });
+        
+        audio.addEventListener('error', () => {
+            statusDiv.textContent = "Connection failed";
+            isPlaying = false;
+        });
+        
+        // Sync correction - if audio gets out of sync, resync every 30 seconds
+        setInterval(() => {
+            if (isPlaying && !audio.paused) {
+                const expectedPosition = getCurrentStreamPosition();
+                const actualPosition = audio.currentTime;
+                const drift = Math.abs(expectedPosition - actualPosition);
+                
+                // If we're more than 2 seconds off, resync
+                if (drift > 2) {
+                    audio.currentTime = expectedPosition;
+                }
+            }
+        }, 30000);
     </script>
 </body>
 </html>
