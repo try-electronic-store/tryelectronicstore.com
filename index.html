@@ -31,6 +31,37 @@
             border: 2px inset #eeeeee;
         }
         
+        .album-container {
+            display: inline-block;
+            perspective: 1000px;
+            margin: 10px;
+        }
+        
+        .album-cover {
+            width: 200px;
+            height: 200px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.8s;
+            cursor: pointer;
+        }
+        
+        .album-cover.flipped {
+            transform: rotateY(180deg);
+        }
+        
+        .cover-front, .cover-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border: 1px solid black;
+        }
+        
+        .cover-back {
+            transform: rotateY(180deg);
+        }
+        
         .status {
             margin: 10px 0;
             font-weight: bold;
@@ -45,6 +76,14 @@
 </head>
 <body>
     <h1>Radio Stream</h1>
+    
+    <div class="album-container">
+        <div class="album-cover" onclick="flipCover()">
+            <img class="cover-front" src="Electronic Store Plug N Play Front.jpg" alt="Album Front">
+            <img class="cover-back" src="Electronic Store Plug n Play Back.jpg" alt="Album Back">
+        </div>
+    </div>
+    <br><br>
     
     <button onclick="tuneIn()">TUNE IN</button>
     <button onclick="tuneOut()">TUNE OUT</button>
@@ -68,7 +107,7 @@
         const positionSpan = document.getElementById('position');
         
         // Radio loop configuration
-        const LOOP_DURATION = 109; // 3 minutes (adjust based on your actual file length)
+        const LOOP_DURATION = 180; // 3 minutes (adjust based on your actual file length)
         const STREAM_START_TIME = new Date('2025-01-01T00:00:00Z'); // Arbitrary reference point
         
         let isPlaying = false;
@@ -154,6 +193,12 @@
                 }
             }
         }, 30000);
+        
+        // Album cover flip functionality
+        function flipCover() {
+            const cover = document.querySelector('.album-cover');
+            cover.classList.toggle('flipped');
+        }
     </script>
 </body>
 </html>
