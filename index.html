@@ -1,4 +1,9 @@
-
+<!DOCTYPE html>
+<html>
+<head>
+    <title>enter the electronic_store</title>
+    <meta charset="UTF-8">
+    <style>
         body {
             font-family: Times New Roman, serif;
             background-color: white;
@@ -35,8 +40,6 @@
         }
         
         .album-cover {
-top: 0;
-left: 0;
             width: 300px;
             height: 300px;
             position: relative;
@@ -51,22 +54,16 @@ left: 0;
         }
         
         .cover-front, .cover-back {
-            top: 10px;
-            left: 10px;
             width: 100%;
             height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
             backface-visibility: hidden;
             border: 1px solid black;
         }
 
-.cover-front {
-position: relative;
-
-}
         .cover-back {
-            position: absolute;
-            top: 0px;
-            left: 0px;
             transform: rotateY(180deg);
         }
         
@@ -80,4 +77,127 @@ position: relative;
             font-size: 12px;
             color: #666666;
         }
+    </style>
+</head>
+
+<body>
+    <h1>electronic_store</h1>
     
+    <div class="album-container">
+        <div class="album-cover" onclick="flipCover()">
+            <img class="cover-front" src="Electronic Store Plug N Play Front.jpg" alt="Plug N Play – electronic_store">
+            <img class="cover-back" src="Electronic Store Plug n Play Back.jpg" alt="Plug N Play – electronic_store">
+        </div>
+    </div>
+
+    <br><br>
+
+    <button onclick="togglePlay()" id="playButton">PLAY</button>
+
+    <div class="info">
+        <p>Stream position: <span id="position">--:--</span></p>
+    </div>
+
+    <audio id="radioStream" preload="none">
+        <source src="https://meek-fox-78808e.netlify.app/audio/250820 electronic store plug n play concatenated.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <script>
+        const audio = document.getElementById('radioStream');
+        const positionSpan = document.getElementById('position');
+        const playButton = document.getElementById('playButton');
+        
+        // Radio loop configuration
+        const LOOP_DURATION = 615; // 10:15 total length in seconds
+        const STREAM_START_TIME = new Date('2025-01-01T00:00:00Z'); // Arbitrary reference point
+        
+        // Track list with timestamps
+        const TRACKS = [
+            { time: 0, title: "Work Me" },
+            { time: 109, title: "Cycles" },
+            { time: 221, title: "Came Out Like a Frog" },
+            { time: 270, title: "In Your Room" },
+            { time: 393, title: "Passion Of the Sky" },
+            { time: 527, title: "Groovy" },
+            { time: 615, title: "Real Madrid" }
+        ];
+        
+        let isPlaying = false;
+        let positionInterval;
+        
+        function getCurrentStreamPosition() {
+            const now = new Date();
+            const elapsed = (now - STREAM_START_TIME) / 1000; // seconds since stream "started"
+            return elapsed % LOOP_DURATION; // current position in loop
+        }
+        
+        function getCurrentTrack(position) {
+            // Find the current track based on position
+            for (let i = TRACKS.length - 1; i >= 0; i--) {
+                if (position >= TRACKS[i].time) {
+                    return TRACKS[i];
+                }
+            }
+            return TRACKS[0]; // Default to first track
+        }
+        
+        function updatePositionDisplay() {
+            if (isPlaying) {
+                const position = getCurrentStreamPosition();
+                const currentTrack = getCurrentTrack(position);
+                const minutes = Math.floor(position / 60);
+                const seconds = Math.floor(position % 60);
+                positionSpan.textContent = `${minutes}:${seconds.toString().padStart(2, '0')} - ${currentTrack.title}`;
+            }
+        }
+        
+        function togglePlay() {
+            if (isPlaying) {
+                // Stop playing
+                audio.pause();
+                isPlaying = false;
+                playButton.textContent = "PLAY";
+                positionSpan.textContent = "--:-- - play some music already";
+                
+                if (positionInterval) {
+                    clearInterval(positionInterval);
+                }
+            } else {
+                // Start playing
+                playButton.textContent = "STOP";
+                
+                // Calculate where we should be in the stream
+                const streamPosition = getCurrentStreamPosition();
+                
+                audio.currentTime = streamPosition;
+                audio.loop = true;
+                
+                audio.play().then(() => {
+                    isPlaying = true;
+                    
+                    // Update position display every second
+                    positionInterval = setInterval(updatePositionDisplay, 1000);
+                    updatePositionDisplay();
+                    
+                }).catch(error => {
+                    playButton.textContent = "PLAY";
+                    console.log('Playbook error:', error);
+                });
+            }
+        }
+        
+        // Handle audio events
+        audio.addEventListener('error', () => {
+            playButton.textContent = "PLAY";
+            isPlaying = false;
+        });
+        
+        // Album cover flip functionality
+        function flipCover() {
+            const cover = document.querySelector('.album-cover');
+            cover.classList.toggle('flipped');
+        }
+    </script>
+</body>
+</html>
