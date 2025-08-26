@@ -19,11 +19,6 @@
             margin-bottom: 10px;
         }
         
-        h2 {
-            font-size: 18px;
-            margin: 20px 0 10px 0;
-        }
-        
         button {
             font-family: Times New Roman, serif;
             font-size: 14px;
@@ -36,19 +31,6 @@
         
         button:active {
             border: 2px inset #eeeeee;
-        }
-        
-        button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-        
-        input[type="text"], input[type="email"] {
-            font-family: Times New Roman, serif;
-            font-size: 14px;
-            padding: 5px;
-            margin: 5px;
-            border: 1px solid #cccccc;
         }
         
         .album-container {
@@ -95,61 +77,6 @@
             font-size: 12px;
             color: #666666;
         }
-        
-        .listener-log {
-            max-width: 600px;
-            margin: 20px auto;
-            text-align: left;
-            border: 1px solid #cccccc;
-            padding: 15px;
-            background-color: #f9f9f9;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-        
-        .log-entry {
-            margin: 5px 0;
-            font-size: 12px;
-            color: #333333;
-        }
-        
-        .log-entry.new {
-            background-color: #ffffcc;
-            padding: 2px 4px;
-            animation: highlight 2s ease-out forwards;
-        }
-        
-        @keyframes highlight {
-            0% { background-color: #ffffcc; }
-            100% { background-color: transparent; }
-        }
-        
-        .customize-form {
-            margin: 15px 0;
-            padding: 10px;
-            border: 1px solid #cccccc;
-            background-color: #f5f5f5;
-            display: inline-block;
-        }
-        
-        .customize-form input {
-            margin: 3px;
-        }
-        
-        .customize-form label {
-            font-size: 12px;
-            margin-right: 5px;
-        }
-        
-        .loading {
-            opacity: 0.6;
-        }
-        
-        .error {
-            color: #cc0000;
-            font-size: 12px;
-            margin: 5px 0;
-        }
     </style>
 </head>
 
@@ -171,22 +98,6 @@
         <p>Stream position: <span id="position">--:--</span></p>
     </div>
 
-    <div class="customize-form">
-        <label for="customName">Name:</label>
-        <input type="text" id="customName" placeholder="Leave blank for random appliance">
-        <label for="customLocation">Location:</label>
-        <input type="text" id="customLocation" placeholder="Leave blank for random location">
-        <br>
-        <label for="userEmail">Email (required to customize):</label>
-        <input type="email" id="userEmail" placeholder="your@email.com">
-        <div id="errorMessage" class="error"></div>
-    </div>
-
-    <h2>Who's Listening <button onclick="refreshLog()" id="refreshButton">Refresh</button></h2>
-    <div class="listener-log" id="listenerLog">
-        <div class="log-entry">Loading...</div>
-    </div>
-
     <audio id="radioStream" preload="none">
         <source src="https://meek-fox-78808e.netlify.app/audio/250820 electronic store plug n play concatenated.mp3" type="audio/mpeg">
         Your browser does not support the audio element.
@@ -196,9 +107,6 @@
         const audio = document.getElementById('radioStream');
         const positionSpan = document.getElementById('position');
         const playButton = document.getElementById('playButton');
-        const listenerLog = document.getElementById('listenerLog');
-        const errorMessage = document.getElementById('errorMessage');
-        const refreshButton = document.getElementById('refreshButton');
         
         // Radio loop configuration
         const LOOP_DURATION = 677; // 11:17 total length in seconds
@@ -217,133 +125,6 @@
         
         let isPlaying = false;
         let positionInterval;
-        
-        // API endpoints
-        const API_BASE = '/.netlify/functions/listener-log';
-        
-        function clearError() {
-            errorMessage.textContent = '';
-        }
-        
-        function showError(message) {
-            errorMessage.textContent = message;
-        }
-        
-        async function loadLog() {
-            try {
-                refreshButton.disabled = true;
-                refreshButton.textContent = 'Loading...';
-                
-                const response = await fetch(API_BASE);
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                }
-                
-                const data = await response.json();
-                displayLogEntries(data.entries);
-                
-            } catch (error) {
-                console.error('Error loading log:', error);
-                
-                // Fallback: Show local sample data
-                const fallbackEntries = [
-                    { name: 'Microwave', location: 'Tokyo' },
-                    { name: 'Blender', location: 'Brooklyn' },
-                    { name: 'Toaster', location: 'Berlin' },
-                    { name: 'Coffee Machine', location: 'Portland (offline mode)' }
-                ];
-                displayLogEntries(fallbackEntries);
-                
-            } finally {
-                refreshButton.disabled = false;
-                refreshButton.textContent = 'Refresh';
-            }
-        }
-        
-        function displayLogEntries(entries) {
-            listenerLog.innerHTML = '';
-            
-            if (!entries || entries.length === 0) {
-                listenerLog.innerHTML = '<div class="log-entry">No listeners yet...</div>';
-                return;
-            }
-            
-            entries.forEach(entry => {
-                const logEntry = document.createElement('div');
-                logEntry.className = 'log-entry';
-                logEntry.textContent = `${entry.name} listened from ${entry.location}`;
-                listenerLog.appendChild(logEntry);
-            });
-        }
-        
-        async function addLogEntry() {
-            const customName = document.getElementById('customName').value.trim();
-            const customLocation = document.getElementById('customLocation').value.trim();
-            const userEmail = document.getElementById('userEmail').value.trim();
-            
-            clearError();
-            
-            try {
-                playButton.disabled = true;
-                playButton.textContent = 'Adding...';
-                
-                const response = await fetch(API_BASE, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        customName,
-                        customLocation,
-                        email: userEmail
-                    })
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                }
-                
-                const data = await response.json();
-                
-                // Update display with new entries
-                displayLogEntries(data.entries);
-                
-                // Highlight the new entry
-                const firstEntry = listenerLog.querySelector('.log-entry');
-                if (firstEntry) {
-                    firstEntry.classList.add('new');
-                }
-                
-                return true;
-                
-            } catch (error) {
-                console.error('Error adding log entry:', error);
-                
-                // Fallback: Add entry locally if API fails
-                const appliances = ['Microwave', 'Blender', 'Toaster', 'Coffee Machine', 'Dishwasher'];
-                const locations = ['Tokyo', 'Brooklyn', 'Berlin', 'Portland', 'Montreal'];
-                
-                const name = (userEmail && customName) ? customName : appliances[Math.floor(Math.random() * appliances.length)];
-                const location = (userEmail && customLocation) ? customLocation : locations[Math.floor(Math.random() * locations.length)];
-                
-                // Add to local display
-                const logEntry = document.createElement('div');
-                logEntry.className = 'log-entry new';
-                logEntry.textContent = `${name} listened from ${location} (local)`;
-                listenerLog.insertBefore(logEntry, listenerLog.firstChild);
-                
-                showError('Using offline mode - log entry saved locally only');
-                return true; // Still allow audio to play
-                
-            } finally {
-                playButton.disabled = false;
-                playButton.textContent = 'PLAY';
-            }
-        }
-        
-        function refreshLog() {
-            loadLog();
-        }
         
         function getCurrentStreamPosition() {
             const now = new Date();
@@ -371,7 +152,7 @@
             }
         }
         
-        async function togglePlay() {
+        function togglePlay() {
             if (isPlaying) {
                 // Stop playing
                 audio.pause();
@@ -383,12 +164,6 @@
                     clearInterval(positionInterval);
                 }
             } else {
-                // Add log entry when starting to play
-                const success = await addLogEntry();
-                if (!success) {
-                    return; // Don't start playing if log entry failed
-                }
-                
                 // Start playing
                 playButton.textContent = "STOP";
                 
@@ -423,14 +198,6 @@
             const cover = document.querySelector('.album-cover');
             cover.classList.toggle('flipped');
         }
-        
-        // Load log on page load
-        window.addEventListener('load', () => {
-            loadLog();
-        });
-        
-        // Auto-refresh log every 30 seconds
-        setInterval(loadLog, 30000);
     </script>
 </body>
 </html>
