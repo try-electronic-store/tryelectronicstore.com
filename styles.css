@@ -4,14 +4,16 @@
             margin: 0;
             padding: 20px;
             font-size: 14px;
+            color: white;
+            font-style: italic;
             text-align: center;
         }
-        
+
         h1 {
             font-size: 24px;
             margin-bottom: 10px;
         }
-        
+
         button {
             font-family: Times New Roman, serif;
             font-size: 14px;
@@ -22,22 +24,17 @@
             border: 2px outset #eeeeee;
             cursor: pointer;
         }
-        
-        img {
-            width: 300px;
-            height: auto;
-        }
 
         button:active {
             border: 2px inset #eeeeee;
         }
-        
+
         .album-container {
             display: inline-block;
             perspective: 1000px;
             margin: 10px;
         }
-        
+
         .album-cover {
             width: 300px;
             height: 300px;
@@ -47,12 +44,13 @@
             cursor: pointer;
             transform-origin: center;
         }
-        
+
         .album-cover.flipped {
             transform: rotateY(180deg);
         }
-        
-        .cover-front, .cover-back {
+
+        .cover-front,
+        .cover-back {
             width: 100%;
             height: 100%;
             position: absolute;
@@ -65,14 +63,86 @@
         .cover-back {
             transform: rotateY(180deg);
         }
-        
+
         .status {
             margin: 10px 0;
             font-weight: bold;
         }
-        
+
         .info {
             margin: 15px 0;
             font-size: 12px;
+            color: #ffffff;
+        }
+
+        #loadingOverlay {
+            position: fixed;
+            inset: 0;
+            background: #000000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999
+        }
+
+        #loaderGif {
+            max-width: 80vw;
+            max-height: 70vh;
+            display: block;
+            margin-bottom: 20px
+        }
+
+        #loadingImage {
+            width: 300px;
+            height: auto;
+        }
+
+        #loadingText {
+            font-family: Times New Roman, serif;
+            font-size: 28px;
+            color: #ffffff;
+            letter-spacing: 10px
+        }
+
+        /* MENU BAR */
+
+        .navMenu {
+            background-color: rgb(0, 0, 0);
+            padding: 10px;
+            /* Add any necessary padding for the banner */
+            position: fixed;
+            border-bottom: 1px solid #000;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 999;
+            /* Set a high z-index to ensure it appears above other elements */
+
+            display: flex;
+            justify-content: space-between;
+            /* Items are placed at the start and end of the container */
+            align-items: center;
+            /* Center items vertically within the container */
+            padding: 10px 20px;
+            /* Add padding for spacing */
+        }
+
+        .mainLogo img {
+            height: 75px;
+            width: auto;
+        }
+
+        .navItem {
+            margin-left: 20px;
+            /* Add spacing between items */
+            margin-right: 40px;
+            /* Add spacing between items */
+            text-align: right;
+            text-decoration: none;
+            color: #f15f86;
+        }
+
+        .navItemClicked {
             color: #ffffff;
         }

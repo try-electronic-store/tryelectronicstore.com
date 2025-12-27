@@ -1,46 +1,112 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>electronic_store</title>
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="../styles.css">
 
 <body>
-    
-    <img src="images/251226-Electronic-Store-Screen-Logo-Animation-Black-Low-Quality.gif" alt="electronic_store logo">
+
+    <div id="loadingOverlay">
+        <img id="loadingImage" src="images/251226-Electronic-Store-Screen-Logo-Animation-Black-Low-Quality.gif"
+            alt="electronic_store logo">
+        <div id="loadingTextContainer">
+            <div id="loadingText">try it<span id="dots"></span></div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            const dotsEl = document.getElementById('dots');
+            let dots = 0;
+            const dotInterval = setInterval(() => {
+                dots = (dots + 1) % 10;
+                dotsEl.textContent = '.'.repeat(dots);
+            }, 500);
+
+            const MIN_MS = 3000;
+            const startTime = Date.now();
+
+            function hideOverlay() {
+                clearInterval(dotInterval);
+                const overlay = document.getElementById('loadingOverlay');
+                if (!overlay) return;
+                overlay.style.transition = 'opacity 0.5s ease';
+                overlay.style.opacity = '0';
+                setTimeout(() => { overlay.style.display = 'none'; }, 600);
+            }
+
+            window.addEventListener('load', () => {
+                const elapsed = Date.now() - startTime;
+                if (elapsed >= MIN_MS) {
+                    hideOverlay();
+                } else {
+                    setTimeout(hideOverlay, MIN_MS - elapsed);
+                }
+            });
+
+            // Safety: ensure overlay is removed after a hard timeout in case 'load' doesn't fire
+            setTimeout(() => {
+                hideOverlay();
+            }, MIN_MS + 10000);
+        })();
+    </script>
+
+    <nav class="navMenu">
+        <a class="mainLogo" href="/">
+            <img src="images/251226-Electronic-Store-Screen-Logo-Animation-Black-Low-Quality.gif"
+                alt="electronic_store logo">
+        </a>
+        <p class="navItemClicked">~try~</p>
+        <a class="navItem" href="../">~buy~</a>
+        <a class="navItem" href="../">~info~</a>
+    </nav>
+
+    </div>
 
     <br>
     <br>
+    <br>
+    <br>
+    <br>
 
-    <div class="album-container">
-        <div class="album-cover" onclick="flipCover()">
-            <img class="cover-front" src="images/Electronic-Store-Plug-N-Play-Front.jpg" alt="Plug N Play – electronic_store">
-            <img class="cover-back" src="images/Electronic-Store-Plug-n-Play-Back.jpg" alt="Plug N Play – electronic_store">
+    <div class="try-section">
+        <div class="album-container">
+            <h3>electronic_store "plug n play" EP</h3>
+            <div class="album-cover" onclick="flipCover()">
+                <img class="cover-front" src="images/Electronic-Store-Plug-N-Play-Front.jpg"
+                    alt="Plug N Play – electronic_store">
+                <img class="cover-back" src="images/Electronic-Store-Plug-n-Play-Back.jpg"
+                    alt="Plug N Play – electronic_store">
+            </div>
+            <br>
+            <button onclick="togglePlay()" id="playButton">PLAY</button>
+            <div class="info">
+                <p>Stream position: <span id="position">--:--</span></p>
+            </div>
+
+            <audio id="radioStream" preload="none">
+                <source
+                    src="https://meek-fox-78808e.netlify.app/audio/250820 electronic store plug n play concatenated.mp3"
+                    type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
         </div>
     </div>
 
     <br>
 
-    <button onclick="togglePlay()" id="playButton">PLAY</button>
-
-    <div class="info">
-        <p>Stream position: <span id="position">--:--</span></p>
-    </div>
-
-    <audio id="radioStream" preload="none">
-        <source src="https://meek-fox-78808e.netlify.app/audio/250820 electronic store plug n play concatenated.mp3" type="audio/mpeg">
-        Your browser does not support the audio element.
-    </audio>
 
     <script>
         const audio = document.getElementById('radioStream');
         const positionSpan = document.getElementById('position');
         const playButton = document.getElementById('playButton');
-        
+
         // Radio loop configuration
         const LOOP_DURATION = 677; // 11:17 total length in seconds
         const STREAM_START_TIME = new Date('2025-01-01T00:00:00Z'); // Arbitrary reference point
-        
+
         // Track list with timestamps
         const TRACKS = [
             { time: 0, title: "Work Me" },
@@ -51,16 +117,16 @@
             { time: 527, title: "Groovy" },
             { time: 615, title: "Real Madrid" }
         ];
-        
+
         let isPlaying = false;
         let positionInterval;
-        
+
         function getCurrentStreamPosition() {
             const now = new Date();
             const elapsed = (now - STREAM_START_TIME) / 1000; // seconds since stream "started"
             return elapsed % LOOP_DURATION; // current position in loop
         }
-        
+
         function getCurrentTrack(position) {
             // Find the current track based on position
             for (let i = TRACKS.length - 1; i >= 0; i--) {
@@ -70,7 +136,7 @@
             }
             return TRACKS[0]; // Default to first track
         }
-        
+
         function updatePositionDisplay() {
             if (isPlaying) {
                 const position = getCurrentStreamPosition();
@@ -80,7 +146,7 @@
                 positionSpan.textContent = `${minutes}:${seconds.toString().padStart(2, '0')} - ${currentTrack.title}`;
             }
         }
-        
+
         function togglePlay() {
             if (isPlaying) {
                 // Stop playing
@@ -88,40 +154,40 @@
                 isPlaying = false;
                 playButton.textContent = "PLAY";
                 positionSpan.textContent = "--:-- - play some music already";
-                
+
                 if (positionInterval) {
                     clearInterval(positionInterval);
                 }
             } else {
                 // Start playing
                 playButton.textContent = "STOP";
-                
+
                 // Calculate where we should be in the stream
                 const streamPosition = getCurrentStreamPosition();
-                
+
                 audio.currentTime = streamPosition;
                 audio.loop = true;
-                
+
                 audio.play().then(() => {
                     isPlaying = true;
-                    
+
                     // Update position display every second
                     positionInterval = setInterval(updatePositionDisplay, 1000);
                     updatePositionDisplay();
-                    
+
                 }).catch(error => {
                     playButton.textContent = "PLAY";
                     console.log('Playbook error:', error);
                 });
             }
         }
-        
+
         // Handle audio events
         audio.addEventListener('error', () => {
             playButton.textContent = "PLAY";
             isPlaying = false;
         });
-        
+
         // Album cover flip functionality
         function flipCover() {
             const cover = document.querySelector('.album-cover');
@@ -129,4 +195,5 @@
         }
     </script>
 </body>
+
 </html>
