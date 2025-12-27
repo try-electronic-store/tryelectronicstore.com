@@ -75,6 +75,52 @@
             color: #ffffff;
         }
 
+        /* MENU BAR */
+
+        .navMenu {
+            background-color: rgb(0, 0, 0);
+            padding: 0px;
+            /* Add any necessary padding for the banner */
+            position: fixed;
+            border-bottom: 1px solid #ffffff;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 999;
+            /* Set a high z-index to ensure it appears above other elements */
+
+            display: flex;
+            justify-content: space-between;
+            /* Items are placed at the start and end of the container */
+            
+            align-items: flex-end;
+            /* Center items vertically within the container */
+            padding: 10px 20px;
+            /* Add padding for spacing */
+        }
+
+        .mainLogo img {
+            height: 75px;
+            width: auto;
+        }
+
+        .navItem {
+            margin-left: 20px;
+            /* Add spacing between items */
+            margin-right: 40px;
+            /* Add spacing between items */
+            text-align: right;
+            text-decoration: none;
+            color: #f15f86;
+        }
+
+        .navItemClicked {
+            color: #ffffff;
+            padding: 0px;
+            border: 0px;
+            margin: 0px;
+        }
+
         #loadingOverlay {
             position: fixed;
             inset: 0;
@@ -103,46 +149,4 @@
             font-size: 28px;
             color: #ffffff;
             letter-spacing: 10px
-        }
-
-        /* MENU BAR */
-
-        .navMenu {
-            background-color: rgb(0, 0, 0);
-            padding: 10px;
-            /* Add any necessary padding for the banner */
-            position: fixed;
-            border-bottom: 1px solid #000;
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 999;
-            /* Set a high z-index to ensure it appears above other elements */
-
-            display: flex;
-            justify-content: space-between;
-            /* Items are placed at the start and end of the container */
-            align-items: center;
-            /* Center items vertically within the container */
-            padding: 10px 20px;
-            /* Add padding for spacing */
-        }
-
-        .mainLogo img {
-            height: 75px;
-            width: auto;
-        }
-
-        .navItem {
-            margin-left: 20px;
-            /* Add spacing between items */
-            margin-right: 40px;
-            /* Add spacing between items */
-            text-align: right;
-            text-decoration: none;
-            color: #f15f86;
-        }
-
-        .navItemClicked {
-            color: #ffffff;
         }
