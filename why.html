@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="UTF-8">
+    
+    <title>electronic_store</title>
+
+    <link rel="stylesheet" type="text/css" href="styles.css">
+
+    <!--for Progressive Web App (turns website into iOS or Android App)-->
+    <link rel="manifest" href="/manifest.json">
+
+
+    <!-- PNG favicons -->
+    <link rel="icon" type="image/png" sizes="16x16" href="images/favicons/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="images/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="images/favicons/favicon-48x48.png">
+
+    <!-- Apple Touch Icons (iOS/Safari) -->
+    <link rel="apple-touch-icon" sizes="180x180" href="images/favicons/apple-touch-icon.png">
+
+    <!-- Android/Chrome -->
+    <link rel="icon" type="image/png" sizes="192x192" href="images/favicons/android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="images/favicons/android-chrome-512x512.png">
+
+    <!-- Final fallback for old browsers (safari pre 2020 etc) -->
+    <link rel="icon" href="images/favicons/favicon.ico" sizes="any">
+
+    
+<body>
+
+    <div id="loadingOverlay">
+        <img id="loadingImage" src="images/251226-Electronic-Store-Screen-Logo-Animation-Black-Low-Quality.gif"
+            alt="electronic_store logo">
+        <div id="loadingTextContainer">
+            <div id="loadingText">why it<span id="dots"></span></div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            const dotsEl = document.getElementById('dots');
+            let dots = 0;
+            const dotInterval = setInterval(() => {
+                dots = (dots + 1) % 10;
+                dotsEl.textContent = '.'.repeat(dots);
+            }, 500);
+
+            const MIN_MS = 3000;
+            const startTime = Date.now();
+
+            function hideOverlay() {
+                clearInterval(dotInterval);
+                const overlay = document.getElementById('loadingOverlay');
+                if (!overlay) return;
+                overlay.style.transition = 'opacity 0.5s ease';
+                overlay.style.opacity = '0';
+                setTimeout(() => { overlay.style.display = 'none'; }, 600);
+            }
+
+            window.addEventListener('load', () => {
+                const elapsed = Date.now() - startTime;
+                if (elapsed >= MIN_MS) {
+                    hideOverlay();
+                } else {
+                    setTimeout(hideOverlay, MIN_MS - elapsed);
+                }
+            });
+
+            // Safety: ensure overlay is removed after a hard timeout in case 'load' doesn't fire
+            setTimeout(() => {
+                hideOverlay();
+            }, MIN_MS + 10000);
+        })();
+    </script>
+
+    <nav class="navMenu">
+        <a class="mainLogo" href="/">
+            <img src="images/251226-Electronic-Store-Screen-Logo-Animation-Black-Low-Quality.gif"
+                alt="electronic_store logo">
+        </a>
+        <a class="navItem" href="../">~try~</a>
+        <a class="navItem" href="../buy.html">~buy~</a>
+        <a class="navItemClicked">~why~</a>
+    </nav>
+
+    </div>
+
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+
+    <div class="why">
+        <h3>why</h3>
+        <br>
+        <p>
+            electronic_store is a independent experimental music project based in the San Francisco Bay Area.
+            <br>
+            It was created by a comparative linguist and an architect that have been friends since childhood. 
+            <br>
+            Our music is born from the sharp beats of electronic dance music, the swagger of folk, and the improvisational sample-based compositions of hip-hop.
+            <br>
+            Taking punk’s DIY ethos, we record, arrange, and mix all of our music ourselves. We release our art through experimental means, to make our music accessible to the local community and be independent from media and distribution companies. You’ll often catch us playing in public places like Dolores Park or the U.C. Berkeley campus – come say hi.
+        </p>
+    </div>
+
+    <br>
+
+</body>
+
+<footer>
+    <p>&copy; 2026 electronic_store</p>
+</footer>
+
+</html>
